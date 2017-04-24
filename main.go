@@ -2,15 +2,18 @@ package main
 
 import (
 	"image"
-	"fmt"
 	"os"
 	"github.com/nfnt/resize"
 	"image/png"
+	"log"
+	"fmt"
 )
 
 func main() {
-	file, _ := os.Open("image.png")
-
+	file, err := os.Open("image.png")
+	if err != nil {
+		log.Fatalf("%s", err)
+	}
 	grayImage := Grayscale(file, "decomposition.min")
 
 	data, _ := os.Create("ishan.resized.png")
@@ -19,20 +22,22 @@ func main() {
 	resizedGrayImage := resize.Resize(9, 9, grayImage, resize.Bicubic)
 
 	png.Encode(data, resizedGrayImage)
-	//png.Encode(normal, grayImage)
-	//rowHash := rowHash(resizedGrayImage)
-	//columnHash := columnHash(resizedGrayImage)
-	//completeHash := [][]int{}
-	//
-	//for _, v := range rowHash {
-	//	fmt.Printf("%d ", v)
-	//}
-	//fmt.Printf("\n\n")
-	//for _, v := range columnHash {
-	//	fmt.Printf("%d ", v)
-	//}
-	fmt.Println(calcHash(resizedGrayImage))
-	//fmt.Println(len(rowHash), len(columnHash))
+
+	rowHash, columnHash := calcHash(resizedGrayImage)
+
+	for i, v := range rowHash {
+		if i%8 == 0 {
+			fmt.Printf("\n")
+		}
+		fmt.Printf("%d ", v)
+	}
+	fmt.Printf("\n\n")
+	for i, v := range columnHash {
+		if i%8 == 0 {
+			fmt.Printf("\n")
+		}
+		fmt.Printf("%d ", v)
+	}
 }
 
 func calcHash(img image.Image) ([]int, []int) {
@@ -46,20 +51,20 @@ func calcHash(img image.Image) ([]int, []int) {
 		for j := 0; j < Y; j++ {
 
 			currentGray, _, _, _ := img.At(i, j).RGBA()
-			previousRowGray, _, _, _ := img.At(i, j-1).RGBA()    //(i + x*j) - 1
-			previousColumnGray, _, _, _ := img.At(j, i-1).RGBA() //(j + y*i) - 1
+			nextRowGray, _, _, _ := img.At(i, j+1).RGBA()    //(i + x*j) - 1
+			nextColumnGray, _, _, _ := img.At(j, i+1).RGBA() //(j + y*i) - 1
 
-			if currentGray >= previousRowGray {
+			if currentGray >= nextRowGray {
 				rowHash = append(rowHash, 1)
 			}
-			if currentGray < previousRowGray {
-				rowHash = append(rowHash, 1)
+			if currentGray < nextRowGray {
+				rowHash = append(rowHash, 0)
 			}
 
-			if currentGray >= previousColumnGray {
+			if currentGray >= nextColumnGray {
 				columnHash = append(columnHash, 1)
 			}
-			if currentGray < previousColumnGray {
+			if currentGray < nextColumnGray {
 				columnHash = append(columnHash, 0)
 			}
 		}
