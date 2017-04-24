@@ -31,58 +31,8 @@ func main() {
 	//for _, v := range columnHash {
 	//	fmt.Printf("%d ", v)
 	//}
-	calcHash(resizedGrayImage)
+	fmt.Println(calcHash(resizedGrayImage))
 	//fmt.Println(len(rowHash), len(columnHash))
-}
-
-func rowHash(img image.Image) []int {
-
-	x := img.Bounds().Max.X
-	y := img.Bounds().Max.Y
-
-	xHash := make([]int, (x-1)*(y-1))
-
-	for i := 0; i < x; i++ {
-		for j := 0; j < y; j++ {
-
-			currentGrayValue, _, _, _ := img.At(i, j).RGBA()
-			previousGrayValue, _, _, _ := img.At(i, j-1).RGBA()
-
-			if (currentGrayValue >= previousGrayValue) {
-				xHash[i*x+j] = 1
-			} else {
-				xHash[i*x+j] = 0
-			}
-
-		}
-	}
-	return xHash
-}
-
-func columnHash(img image.Image) []int {
-
-	x := img.Bounds().Max.X
-	y := img.Bounds().Max.Y
-
-	fmt.Println(x, y)
-
-	hash := make([]int, x*y)
-	count := 0
-	for i := 1; i < y; i++ {
-		for j := 1; j < x; j++ {
-
-			currentGrayValue, _, _, _ := img.At(j-1, i).RGBA()
-			previousGrayValue, _, _, _ := img.At(j-1, i).RGBA()
-			count++
-			if (currentGrayValue >= previousGrayValue) {
-				hash[j*(y-1)+i] = 1
-			} else {
-				hash[j*(y-1)+i] = 0
-			}
-		}
-	}
-	fmt.Println(count)
-	return hash
 }
 
 func calcHash(img image.Image) ([]int, []int) {
