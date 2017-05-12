@@ -1,4 +1,4 @@
-package phash
+package perceptualhash
 
 import (
 	"image/jpeg"

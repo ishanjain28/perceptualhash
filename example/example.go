@@ -33,7 +33,7 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		os.Exit(1)
 	}
-	percentSimilar, err := phash.CalculateSimilarity(firstImagePath, secondImagePath, 512)
+	percentSimilar, err := perceptualhash.CalculateSimilarity(firstImagePath, secondImagePath, 512)
 	if err != nil {
 		log.Fatalf("%s", err)
 	}

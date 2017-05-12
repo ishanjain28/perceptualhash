@@ -1,4 +1,4 @@
-# go-perceptual-hash
+# perceptual-hash
 This Library calculates the similarity between two images and returns a value in similarity in percentage
 
 # Algorithm
